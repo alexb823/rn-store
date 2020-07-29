@@ -4,24 +4,15 @@ import {
   Text,
   StyleSheet,
   Image,
-  useWindowDimensions,
   TouchableOpacity,
   TouchableNativeFeedback,
   Platform,
 } from 'react-native';
-
+import Card from '../UI/Card';
 
 const styles = StyleSheet.create({
-  product: {
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5,
-    borderRadius: 10,
-    backgroundColor: 'white',
+  card: {
     margin: 20,
-    minHeight: 300,
   },
   TouchableContainer: {
     borderRadius: 10,
@@ -56,7 +47,6 @@ const styles = StyleSheet.create({
 });
 
 const ProductItem = ({ imageUrl, title, price, onSelect, children }) => {
-  const windowHeight = useWindowDimensions().height;
   let TouchableCmp = TouchableOpacity;
 
   if (Platform.OS === 'android' && Platform.Version >= 21) {
@@ -64,7 +54,7 @@ const ProductItem = ({ imageUrl, title, price, onSelect, children }) => {
   }
 
   return (
-    <View style={{ ...styles.product, height: windowHeight / 1.9 }}>
+    <Card style={styles.card}>
       <View style={styles.TouchableContainer}>
         <TouchableCmp onPress={onSelect} useForeground>
           <View>
@@ -79,7 +69,7 @@ const ProductItem = ({ imageUrl, title, price, onSelect, children }) => {
           </View>
         </TouchableCmp>
       </View>
-    </View>
+    </Card>
   );
 };
 

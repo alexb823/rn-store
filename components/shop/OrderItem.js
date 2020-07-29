@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import CartItem from './CartItem';
 import Colors from '../../constants/Colors';
+import Card from '../UI/Card';
 
 const styles = StyleSheet.create({
   orderItem: {
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5,
-    borderRadius: 10,
-    backgroundColor: 'white',
+    height: 'auto',
+    minHeight: 'auto',
     margin: 20,
     padding: 10,
     alignItems: 'center',
@@ -41,7 +37,7 @@ const styles = StyleSheet.create({
 const OrderItem = ({ amount, date, items }) => {
   const [showDetails, setShowDetails] = useState(false);
   return (
-    <View style={styles.orderItem}>
+    <Card style={styles.orderItem}>
       <View style={styles.summary}>
         <Text style={styles.total}>$ {amount}</Text>
         <Text style={styles.date}>{date}</Text>
@@ -65,7 +61,7 @@ const OrderItem = ({ amount, date, items }) => {
           ))}
         </View>
       )}
-    </View>
+    </Card>
   );
 };
 

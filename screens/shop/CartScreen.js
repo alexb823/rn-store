@@ -6,6 +6,7 @@ import Colors from '../../constants/Colors';
 import CartItem from '../../components/shop/CartItem';
 import { removeFromCart } from '../../store/actions/cartActions';
 import { addOrder } from '../../store/actions/ordersActions';
+import Card from '../../components/UI/Card';
 
 const styles = StyleSheet.create({
   screen: {
@@ -15,15 +16,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 20,
     padding: 10,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5,
-    borderRadius: 10,
-    backgroundColor: 'white',
+    marginBottom: 20,
+    height: 'auto',
+    minHeight: 'auto',
   },
   summaryText: {
     fontFamily: 'openSansBold',
@@ -54,7 +50,7 @@ const CartScreen = () => {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.summary}>
+      <Card style={styles.summary}>
         <Text style={styles.summaryText}>
           Total:{' '}
           <Text style={styles.amount}>
@@ -67,7 +63,7 @@ const CartScreen = () => {
           disabled={cartItems.length === 0}
           onPress={() => dispatch(addOrder(cartItems, totalAmount))}
         />
-      </View>
+      </Card>
       <FlatList data={cartItems} renderItem={handleRenderItems} />
     </View>
   );

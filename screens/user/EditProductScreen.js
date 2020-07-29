@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Platform,
+  Alert,
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -37,6 +38,8 @@ const styles = StyleSheet.create({
 });
 
 const EditProductScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+
   const productId = navigation.getParam('productId');
   const editedProduct = useSelector((state) =>
     state.products.userProducts.find((product) => product.id === productId)
@@ -51,20 +54,18 @@ const EditProductScreen = ({ navigation }) => {
     editedProduct ? editedProduct.description : ''
   );
 
-  const dispatch = useDispatch();
-
   const handleSubmit = () => {
     if (editedProduct) {
       dispatch(updateProduct(productId, title, imageUrl, description));
     } else {
       dispatch(createProduct(title, imageUrl, description, +price));
     }
+    navigation.navigate('UserProducts')
   };
 
   useEffect(() => {
     navigation.setParams({ handleSubmit });
   }, [productId, title, imageUrl, description, price]);
-  // (id, ownerId, title, imageUrl, description, price)
 
   return (
     <ScrollView>
