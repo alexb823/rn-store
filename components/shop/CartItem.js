@@ -34,22 +34,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const CartItem = ({ quantity, productTitle, sum, onRemove }) => {
+const CartItem = ({ quantity, productTitle, sum, onRemove, deletable }) => {
   return (
     <View style={styles.cardItem}>
       <View style={styles.itemData}>
         <Text style={styles.quantity}>{quantity} </Text>
-        <Text style={styles.mainText} numberOfLines={1} >{productTitle}</Text>
+        <Text style={styles.mainText} numberOfLines={1}>
+          {productTitle}
+        </Text>
       </View>
       <View style={styles.itemData}>
         <Text style={styles.mainText}>{sum.toFixed(2)}</Text>
-        <TouchableOpacity onPress={onRemove} style={styles.deleteButton}>
-          <Ionicons
-            name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
-            size={23}
-            color="red"
-          />
-        </TouchableOpacity>
+        {deletable && (
+          <TouchableOpacity onPress={onRemove} style={styles.deleteButton}>
+            <Ionicons
+              name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
+              size={23}
+              color="red"
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

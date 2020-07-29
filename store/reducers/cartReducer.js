@@ -1,5 +1,8 @@
 import { ADD_TO_CART, REMOVE_FROM_CART } from '../actions/cartActions';
+import { ADD_ORDER } from '../actions/ordersActions';
+
 import CartItem from '../../models/cartItem';
+import { DELETE_PRODUCT } from '../actions/productsActions';
 
 const initialState = {
   items: {},
@@ -12,12 +15,14 @@ const cartReducer = (state = initialState, action) => {
       return addToCartHelper(state, action);
     case REMOVE_FROM_CART:
       return removeFromCartHelper(state, action);
+    case ADD_ORDER:
+      return initialState;
+    case DELETE_PRODUCT:
+      return deleteProductHelper(state, action);
     default:
       return state;
   }
 };
-
-export default cartReducer;
 
 //helper func
 const addToCartHelper = (state, action) => {
@@ -59,3 +64,18 @@ const removeFromCartHelper = (state, action) => {
   }
   return { ...state, items: updatedItems, totalAmount: updatedTotal };
 };
+
+const deleteProductHelper = (state, action) => {
+  const { items, totalAmount } = state;
+  const { productId } = action;
+  if (items[productId]) {
+    const updatedItems = { ...items };
+    const updatedTotal = totalAmount - items[productId].sum;
+    delete updatedItems[productId];
+    return { items: updatedItems, totalAmount: updatedTotal };
+  } else {
+    return state;
+  }
+};
+
+export default cartReducer;

@@ -4,14 +4,12 @@ import {
   Text,
   StyleSheet,
   Image,
-  Button,
   useWindowDimensions,
   TouchableOpacity,
   TouchableNativeFeedback,
   Platform,
 } from 'react-native';
 
-import Colors from '../../constants/Colors';
 
 const styles = StyleSheet.create({
   product: {
@@ -35,29 +33,29 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: 'center',
-    height: '15%',
+    height: '17%',
     padding: 10,
   },
   title: {
     fontSize: 18,
     marginVertical: 2,
-    fontFamily: 'openSansBold'
+    fontFamily: 'openSansBold',
   },
   price: {
     fontSize: 14,
     color: '#888',
-    fontFamily: 'openSans'
+    fontFamily: 'openSans',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: '25%',
+    height: '23%',
     paddingHorizontal: 20,
   },
 });
 
-const ProductItem = ({ imageUrl, title, price, onViewDetail, onAddToCart }) => {
+const ProductItem = ({ imageUrl, title, price, onSelect, children }) => {
   const windowHeight = useWindowDimensions().height;
   let TouchableCmp = TouchableOpacity;
 
@@ -68,7 +66,7 @@ const ProductItem = ({ imageUrl, title, price, onViewDetail, onAddToCart }) => {
   return (
     <View style={{ ...styles.product, height: windowHeight / 1.9 }}>
       <View style={styles.TouchableContainer}>
-        <TouchableCmp onPress={onViewDetail} useForeground>
+        <TouchableCmp onPress={onSelect} useForeground>
           <View>
             <Image style={styles.image} source={{ uri: imageUrl }} />
             <View style={styles.textContainer}>
@@ -77,18 +75,7 @@ const ProductItem = ({ imageUrl, title, price, onViewDetail, onAddToCart }) => {
               </Text>
               <Text style={styles.price}>${price.toFixed(2)}</Text>
             </View>
-            <View style={styles.buttonContainer}>
-              <Button
-                title="View Details"
-                color={Colors.primary}
-                onPress={onViewDetail}
-              />
-              <Button
-                title="To Cart"
-                color={Colors.primary}
-                onPress={onAddToCart}
-              />
-            </View>
+            <View style={styles.buttonContainer}>{children}</View>
           </View>
         </TouchableCmp>
       </View>
