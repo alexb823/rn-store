@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   Platform,
   Alert,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,10 +17,16 @@ import {
   updateProduct,
 } from '../../store/actions/productsActions';
 import Input from '../../components/UI/Input';
+import Colors from '../../constants/Colors';
 
 const styles = StyleSheet.create({
   form: {
     margin: 20,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -55,6 +62,9 @@ const inputUpdateHelper = (state, action) => {
 
 const EditProductScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
 
   const productId = navigation.getParam('productId');
   const editedProduct = useSelector((state) =>
@@ -77,40 +87,51 @@ const EditProductScreen = ({ navigation }) => {
     formIsValid: !!editedProduct,
   });
 
-  const {
-    inputValues: { title, imageUrl, description, price },
-  } = formState;
+
+  useEffect(() => {
+    if (error) {
+      setError('');
+      return Alert.alert('An error ocurred!', error, [{ text: 'Okay' }]);
+    }
+  }, [error]);
 
   useEffect(() => {
     navigation.setParams({ handleSubmit });
   }, [productId, formState]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsLoading(true);
     if (!formState.formIsValid) {
       return Alert.alert('Wrong!', 'Please check the errors in the form', [
         { text: 'Okay' },
       ]);
     }
-    if (editedProduct) {
-      dispatch(
-        updateProduct(
-          productId,
-          formState.inputValues.title,
-          formState.inputValues.imageUrl,
-          formState.inputValues.description
-        )
-      );
-    } else {
-      dispatch(
-        createProduct(
-          formState.inputValues.title,
-          formState.inputValues.imageUrl,
-          formState.inputValues.description,
-          +formState.inputValues.price
-        )
-      );
+    try {
+      if (editedProduct) {
+        await dispatch(
+          updateProduct(
+            productId,
+            formState.inputValues.title,
+            formState.inputValues.imageUrl,
+            formState.inputValues.description
+          )
+        );
+      } else {
+        await dispatch(
+          createProduct(
+            formState.inputValues.title,
+            formState.inputValues.imageUrl,
+            formState.inputValues.description,
+            +formState.inputValues.price
+          )
+        );
+      }
+      navigation.navigate('UserProducts');
+    } catch (error) {
+      console.log('in the catch block', error);
+      setError(error.message);
     }
-    navigation.navigate('UserProducts');
+    setIsLoading(false);
   };
 
   const handleOnInputChange = (inputName, value, isValid) => {
@@ -122,11 +143,19 @@ const EditProductScreen = ({ navigation }) => {
     });
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={(Platform.OS === 'ios')? "padding" : null}
-      keyboardVerticalOffset={Platform.select({ios: 0, android: 500})}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={Platform.select({ ios: 0, android: 500 })}
     >
       <ScrollView>
         <View style={styles.form}>
@@ -139,7 +168,7 @@ const EditProductScreen = ({ navigation }) => {
             returnKeyType="next"
             inputName="title"
             onInputChange={handleOnInputChange}
-            initialValue={title}
+            initialValue={formState.inputValues.title}
             initialValid={!!editedProduct}
             required
           />
@@ -151,7 +180,7 @@ const EditProductScreen = ({ navigation }) => {
             returnKeyType="next"
             inputName="imageUrl"
             onInputChange={handleOnInputChange}
-            initialValue={imageUrl}
+            initialValue={formState.inputValues.imageUrl}
             initialValid={!!editedProduct}
             required
           />
@@ -180,7 +209,7 @@ const EditProductScreen = ({ navigation }) => {
             numberOfLines={3}
             inputName="description"
             onInputChange={handleOnInputChange}
-            initialValue={description}
+            initialValue={formState.inputValues.description}
             initialValid={!!editedProduct}
             required
             minLength={5}

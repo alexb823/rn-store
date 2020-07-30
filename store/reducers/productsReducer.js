@@ -3,6 +3,7 @@ import {
   DELETE_PRODUCT,
   UPDATE_PRODUCT,
   CREATE_PRODUCT,
+  SET_PRODUCTS,
 } from '../actions/productsActions';
 import Product from '../../models/product';
 
@@ -15,6 +16,16 @@ const initialState = {
 
 const productsReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_PRODUCTS:
+      return {
+        ...state,
+        availableProducts: action.products,
+        userProducts: action.products.filter((p) => p.ownerId === 'u1'),
+      };
+    case CREATE_PRODUCT:
+      return createProductHelper(state, action);
+    case UPDATE_PRODUCT:
+      return updateProductHelper(state, action);
     case DELETE_PRODUCT:
       return {
         ...state,
@@ -25,10 +36,6 @@ const productsReducer = (state = initialState, action) => {
           (product) => product.id !== action.productId
         ),
       };
-    case CREATE_PRODUCT:
-      return createProductHelper(state, action);
-    case UPDATE_PRODUCT:
-      return updateProductHelper(state, action);
     default:
       return state;
   }
@@ -37,15 +44,8 @@ const productsReducer = (state = initialState, action) => {
 // Helper funcs
 const createProductHelper = (state, action) => {
   const { availableProducts, userProducts } = state;
-  const { title, imageUrl, description, price } = action.productData;
-  const product = new Product(
-    Date.now().toString(),
-    'u1',
-    title,
-    imageUrl,
-    description,
-    price
-  );
+  const { id, title, imageUrl, description, price } = action.productData;
+  const product = new Product(id, 'u1', title, imageUrl, description, price);
 
   return {
     ...state,
@@ -54,9 +54,6 @@ const createProductHelper = (state, action) => {
   };
 };
 
-// id,
-// productData: { title, imageUrl, description, price },
-// constructor(id, ownerId, title, imageUrl, description, price)
 const updateProductHelper = (state, action) => {
   const { availableProducts, userProducts } = state;
   const {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FlatList, StyleSheet, Platform, Button, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -13,6 +13,7 @@ const styles = StyleSheet.create({});
 const UserProductsScreen = ({ navigation }) => {
   const userProducts = useSelector((state) => state.products.userProducts);
   const dispatch = useDispatch();
+
 
   const handleRenderItem = ({ item }) => {
     const handleDelete = () => {
@@ -48,6 +49,8 @@ const UserProductsScreen = ({ navigation }) => {
   return <FlatList data={userProducts} renderItem={handleRenderItem} />;
 };
 
+
+//Navigation
 UserProductsScreen.navigationOptions = ({ navigation }) => {
   const headerLeft = () => {
     return (

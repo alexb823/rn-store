@@ -1,5 +1,12 @@
-import React from 'react';
-import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  Button,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Colors from '../../constants/Colors';
@@ -32,7 +39,7 @@ const styles = StyleSheet.create({
 
 const CartScreen = () => {
   const totalAmount = useSelector((state) => state.cart.totalAmount);
-  const cartItems = useSelector(({ cart: { items } }) => {
+  const items = useSelector(({ cart: { items } }) => {
     const arr = [];
     for (const key in items) {
       if (items.hasOwnProperty(key)) {
@@ -42,10 +49,18 @@ const CartScreen = () => {
     return arr.sort((a, b) => (a.productTitle > b.productTitle ? 1 : -1));
   });
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRenderItems = ({ item }) => {
     const handleOnRemove = () => dispatch(removeFromCart(item.id));
     return <CartItem {...item} onRemove={handleOnRemove} deletable />;
+  };
+
+  const handleAddOrder = () => {
+    setIsLoading(true);
+    dispatch(addOrder(items, totalAmount)).then(() => {
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -57,14 +72,18 @@ const CartScreen = () => {
             ${Math.round(totalAmount.toFixed(2) * 100) / 100}
           </Text>
         </Text>
-        <Button
-          title="Order Now"
-          color={Colors.secondary}
-          disabled={cartItems.length === 0}
-          onPress={() => dispatch(addOrder(cartItems, totalAmount))}
-        />
+        {isLoading ? (
+          <ActivityIndicator size="small" color={Colors.primary} />
+        ) : (
+          <Button
+            title="Order Now"
+            color={Colors.secondary}
+            disabled={items.length === 0}
+            onPress={handleAddOrder}
+          />
+        )}
       </Card>
-      <FlatList data={cartItems} renderItem={handleRenderItems} />
+      <FlatList data={items} renderItem={handleRenderItems} />
     </View>
   );
 };
