@@ -16,10 +16,10 @@ const styles = StyleSheet.create({
 
 const Card = (props) => {
   const windowHeight = useWindowDimensions().height;
-
+  const moreStyles = {height: windowHeight / 1.9}
   return (
     <View
-      style={{ ...styles.card, height: windowHeight / 1.9, ...props.style }}
+      style={{ ...styles.card, ...moreStyles, ...props.style }}
     >
       {props.children}
     </View>
