@@ -68,7 +68,7 @@ const EditProductScreen = ({ navigation }) => {
 
   const productId = navigation.getParam('productId');
   const editedProduct = useSelector((state) =>
-    state.products.userProducts.find((product) => product.id === productId)
+    state.products?.userProducts?.find((product) => product.id === productId)
   );
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
@@ -128,7 +128,7 @@ const EditProductScreen = ({ navigation }) => {
       }
       navigation.navigate('UserProducts');
     } catch (error) {
-      console.log('in the catch block', error);
+      console.log('in the catch block', error.response.data.error.message);
       setError(error.message);
     }
     setIsLoading(false);

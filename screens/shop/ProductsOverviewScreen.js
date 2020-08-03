@@ -96,7 +96,7 @@ const ProductsOverviewScreen = ({ navigation }) => {
   if (!isLoading && products.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text>No products found. Maybe start creating some.</Text>
+        <Text>No products found.</Text>
       </View>
     );
   }

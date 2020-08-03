@@ -5,9 +5,11 @@ export const SET_ORDERS = 'SET_ORDERS';
 
 export const addOrder = (items, totalAmount) => {
   const date = new Date().toISOString();
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
     return firebase
-      .post('/orders/u1.json', {
+      .post(`/orders/${userId}.json?auth=${token}`, {
         items,
         totalAmount,
         date,
@@ -18,15 +20,16 @@ export const addOrder = (items, totalAmount) => {
           orderData: { id: data.name, items, totalAmount, date },
         })
       )
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e, e.response.data.error.message));
   };
 };
 
 // id, items, totalAmount, date)
 export const fetchOrders = () => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const userId = getState().auth.userId;
     return firebase
-      .get('/orders/u1.json')
+      .get(`/orders/${userId}.json`)
       .then(({ data }) => {
         const orders = [];
         for (const key in data) {
@@ -34,6 +37,6 @@ export const fetchOrders = () => {
         }
         dispatch({ type: SET_ORDERS, orders});
       })
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e, e.response.data.error.message));
   };
 };

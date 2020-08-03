@@ -8,10 +8,9 @@ import {
 import Product from '../../models/product';
 
 const initialState = {
-  availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter((prod) => prod.ownerId === 'u1'),
+  availableProducts: [],
+  userProducts: [],
 };
-
 // (id, ownerId, title, imageUrl, description, price)
 
 const productsReducer = (state = initialState, action) => {
@@ -20,7 +19,7 @@ const productsReducer = (state = initialState, action) => {
       return {
         ...state,
         availableProducts: action.products,
-        userProducts: action.products.filter((p) => p.ownerId === 'u1'),
+        userProducts: action.userProducts,
       };
     case CREATE_PRODUCT:
       return createProductHelper(state, action);
@@ -44,9 +43,15 @@ const productsReducer = (state = initialState, action) => {
 // Helper funcs
 const createProductHelper = (state, action) => {
   const { availableProducts, userProducts } = state;
-  const { id, title, imageUrl, description, price } = action.productData;
-  const product = new Product(id, 'u1', title, imageUrl, description, price);
-
+  const {
+    id,
+    ownerId,
+    title,
+    imageUrl,
+    description,
+    price,
+  } = action.productData;
+  const product = new Product(id, ownerId, title, imageUrl, description, price);
   return {
     ...state,
     availableProducts: [...availableProducts, product],
@@ -63,8 +68,9 @@ const updateProductHelper = (state, action) => {
   const idxUserPr = userProducts.findIndex((p) => p.id === id);
   const idxAvailablePr = availableProducts.findIndex((p) => p.id === id);
 
+  // id, ownerId, title, imageUrl, description, price
   const product = new Product(
-    Date.now().toString(),
+    userProducts[idxUserPr].id,
     userProducts[idxUserPr].ownerId,
     title,
     imageUrl,

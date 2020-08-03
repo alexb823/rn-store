@@ -90,7 +90,7 @@ const AuthScreen = (props) => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert('An Error!', error, [{ text: 'Okay' }]);
+      Alert.alert('An Error Occurred!', error, [{ text: 'Okay' }]);
     }
   }, [error]);
 
@@ -111,10 +111,11 @@ const AuthScreen = (props) => {
     setIsLoading(true);
     try {
       await dispatch(action);
-    } catch (error) {
-      setError(error.meesage);
+      props.navigation.navigate('Shop')
+    } catch (e) {
+      setError(e.message)
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleOnInputChange = (inputName, value, isValid) => {
