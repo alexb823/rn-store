@@ -27,14 +27,16 @@ const StartupScreen = ({ navigation }) => {
         navigation.navigate('Auth');
         return;
       }
+
       const { token, userId, expirationDate } = JSON.parse(userData);
       const expDate = new Date(expirationDate);
-
       if (expDate <= new Date() || !token || !userId) {
         navigation.navigate('Auth');
         return;
       }
-      dispatch(authenticate(token, userId));
+
+      const expInMilSec = expDate.getTime() - Date.now();
+      dispatch(authenticate(token, userId, expInMilSec));
       navigation.navigate('Shop');
     };
     tryLogin();

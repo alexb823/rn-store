@@ -2,8 +2,9 @@ import { AsyncStorage } from 'react-native';
 import signupApi from '../../api/signupApi';
 import loginApi from '../../api/loginApi';
 
-
 export const AUTHENTICATE = 'AUTHENTICATE';
+export const LOGOUT = 'LOGOUT';
+let timer;
 
 const saveDataToStorage = (token, userId, expirationDate) => {
   AsyncStorage.setItem(
@@ -12,8 +13,11 @@ const saveDataToStorage = (token, userId, expirationDate) => {
   );
 };
 
-export const authenticate = (token, userId) => {
-  return { type: AUTHENTICATE, token, userId };
+export const authenticate = (token, userId, expirationTime) => {
+  return (dispatch) => {
+    dispatch(setLogoutTimer(expirationTime));
+    dispatch({ type: AUTHENTICATE, token, userId });
+  };
 };
 
 export const signup = (email, password) => {
@@ -22,11 +26,12 @@ export const signup = (email, password) => {
     return signupApi
       .post('', { email, password, returnSecureToken: true })
       .then(({ data }) => {
+        const expInMilSec = parseInt(data.expiresIn) * 1000;
         const expirationDate = new Date(
-          new Date().getTime() + +data.expiresIn * 1000
+          new Date().getTime() + expInMilSec
         ).toISOString();
         saveDataToStorage(data.idToken, data.localId, expirationDate);
-        return dispatch(authenticate(data.idToken, data.localId));
+        return dispatch(authenticate(data.idToken, data.localId, expInMilSec));
       })
       .catch((e) => {
         console.log(e.response.data.error.message);
@@ -49,11 +54,12 @@ export const login = (email, password) => {
     return loginApi
       .post('', { email, password, returnSecureToken: true })
       .then(({ data }) => {
+        const expInMilSec = parseInt(data.expiresIn) * 1000;
         const expirationDate = new Date(
-          new Date().getTime() + +data.expiresIn * 1000
+          new Date().getTime() + expInMilSec
         ).toISOString();
         saveDataToStorage(data.idToken, data.localId, expirationDate);
-        return dispatch(authenticate(data.idToken, data.localId));
+        return dispatch(authenticate(data.idToken, data.localId, expInMilSec));
       })
       .catch((e) => {
         console.log(e.response.data.error.message);
@@ -70,3 +76,22 @@ export const login = (email, password) => {
       });
   };
 };
+
+const clearLogoutTimer = () => {
+  if (timer) clearTimeout(timer);
+};
+
+export const logout = () => {
+  clearLogoutTimer();
+  AsyncStorage.removeItem('userData');
+  return { type: LOGOUT };
+};
+
+export const setLogoutTimer = (mSec) => {
+  return (dispatch) => {
+    timer = setTimeout(() => {
+      dispatch(logout());
+    }, mSec);
+  };
+};
+
