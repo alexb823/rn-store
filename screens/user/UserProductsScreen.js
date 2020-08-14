@@ -71,7 +71,7 @@ const UserProductsScreen = ({ navigation }) => {
 };
 
 //Navigation
-UserProductsScreen.navigationOptions = ({ navigation }) => {
+export const screenOptions = ({ navigation }) => {
   const headerLeft = () => {
     return (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>

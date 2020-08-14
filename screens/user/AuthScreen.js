@@ -95,14 +95,14 @@ const AuthScreen = (props) => {
   }, [error]);
 
   const authHandler = async () => {
-    let action;
+    let signupOrLogin;
     if (isSignup) {
-      action = signup(
+      signupOrLogin = signup(
         formState.inputValues.email,
         formState.inputValues.password
       );
     } else {
-      action = login(
+      signupOrLogin = login(
         formState.inputValues.email,
         formState.inputValues.password
       );
@@ -110,10 +110,9 @@ const AuthScreen = (props) => {
     setError('');
     setIsLoading(true);
     try {
-      await dispatch(action);
-      props.navigation.navigate('Shop')
+      await dispatch(signupOrLogin);
     } catch (e) {
-      setError(e.message)
+      setError(e.message);
       setIsLoading(false);
     }
   };
@@ -184,8 +183,6 @@ const AuthScreen = (props) => {
   );
 };
 
-AuthScreen.navigationOptions = {
-  headerTitle: 'Log In',
-};
+export const screenOptions = { headerTitle: 'Log In' };
 
 export default AuthScreen;

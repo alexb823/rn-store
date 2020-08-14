@@ -4,6 +4,8 @@ import loginApi from '../../api/loginApi';
 
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const LOGOUT = 'LOGOUT';
+export const SET_DID_TRY_AL = 'SET_DID_TRY_AL';
+
 let timer;
 
 const saveDataToStorage = (token, userId, expirationDate) => {
@@ -11,6 +13,10 @@ const saveDataToStorage = (token, userId, expirationDate) => {
     'userData',
     JSON.stringify({ token, userId, expirationDate })
   );
+};
+
+export const setDidTryAl = () => {
+  return { type: SET_DID_TRY_AL };
 };
 
 export const authenticate = (token, userId, expirationTime) => {
@@ -94,4 +100,3 @@ export const setLogoutTimer = (mSec) => {
     }, mSec);
   };
 };
-

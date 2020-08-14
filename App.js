@@ -5,7 +5,7 @@ import * as Font from 'expo-font';
 import { enableScreens } from 'react-native-screens';
 
 import store from './store';
-import NavigationContainer from './navigation/NavigationContainer';
+import AppNavigator from './navigation/AppNavigator';
 
 import usePrepareResources from './hooks/usePrepareResources.js';
 
@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer />
+      <AppNavigator />
       <StatusBar style="auto" />
     </Provider>
   );

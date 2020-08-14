@@ -5,8 +5,8 @@ import {
   StyleSheet,
   AsyncStorage,
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { authenticate } from '../store/actions/authActions';
+import { useDispatch } from 'react-redux';
+import { authenticate, setDidTryAl } from '../store/actions/authActions';
 
 import Colors from '../constants/Colors';
 
@@ -18,26 +18,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const StartupScreen = ({ navigation }) => {
+const StartupScreen = () => {
   const dispatch = useDispatch();
+
   useEffect(() => {
     const tryLogin = async () => {
       const userData = await AsyncStorage.getItem('userData');
       if (!userData) {
-        navigation.navigate('Auth');
+        dispatch(setDidTryAl());
         return;
       }
 
       const { token, userId, expirationDate } = JSON.parse(userData);
       const expDate = new Date(expirationDate);
       if (expDate <= new Date() || !token || !userId) {
-        navigation.navigate('Auth');
+        dispatch(setDidTryAl())
         return;
       }
 
       const expInMilSec = expDate.getTime() - Date.now();
       dispatch(authenticate(token, userId, expInMilSec));
-      navigation.navigate('Shop');
     };
     tryLogin();
   }, []);

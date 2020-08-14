@@ -60,13 +60,12 @@ const inputUpdateHelper = (state, action) => {
   };
 };
 
-const EditProductScreen = ({ navigation }) => {
+const EditProductScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-
-  const productId = navigation.getParam('productId');
+  const productId = route.params?.productId;
   const editedProduct = useSelector((state) =>
     state.products?.userProducts?.find((product) => product.id === productId)
   );
@@ -87,17 +86,12 @@ const EditProductScreen = ({ navigation }) => {
     formIsValid: !!editedProduct,
   });
 
-
   useEffect(() => {
     if (error) {
       setError('');
       return Alert.alert('An error ocurred!', error, [{ text: 'Okay' }]);
     }
   }, [error]);
-
-  useEffect(() => {
-    navigation.setParams({ handleSubmit });
-  }, [productId, formState]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -133,6 +127,24 @@ const EditProductScreen = ({ navigation }) => {
     }
     setIsLoading(false);
   };
+
+  const headerRight = () => {
+    return (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Save"
+          iconName={
+            Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
+          }
+          onPress={handleSubmit}
+        />
+      </HeaderButtons>
+    );
+  };
+
+  useEffect(() => {
+    navigation.setOptions({ headerRight });
+  }, [productId, formState]);
 
   const handleOnInputChange = (inputName, value, isValid) => {
     dispatchFormState({
@@ -220,25 +232,11 @@ const EditProductScreen = ({ navigation }) => {
   );
 };
 
-EditProductScreen.navigationOptions = ({ navigation }) => {
-  const productId = navigation.getParam('productId');
-  const handleSubmit = navigation.getParam('handleSubmit');
-  const headerRight = () => {
-    return (
-      <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item
-          title="Save"
-          iconName={
-            Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
-          }
-          onPress={handleSubmit}
-        />
-      </HeaderButtons>
-    );
-  };
+export const screenOptions = ({ route }) => {
+  const productId = route.params?.productId;
+
   return {
     headerTitle: productId ? 'Edit Product' : 'Add Product',
-    headerRight,
   };
 };
 

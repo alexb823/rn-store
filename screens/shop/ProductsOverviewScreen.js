@@ -54,9 +54,9 @@ const ProductsOverviewScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    const willFocusListener = navigation.addListener('willFocus', loadProducts);
+    const unsubscribe = navigation.addListener('focus', loadProducts);
     return () => {
-      willFocusListener.remove();
+      unsubscribe();
     };
   }, []);
 
@@ -120,7 +120,7 @@ const ProductsOverviewScreen = ({ navigation }) => {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = ({ navigation }) => {
+export const screenOptions = ({ navigation }) => {
   const headerRight = () => {
     return (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>

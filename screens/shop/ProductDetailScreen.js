@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const ProductDetailScreen = ({ navigation }) => {
+const ProductDetailScreen = ({ route }) => {
   const imgHeight = useWindowDimensions().height / 1.9;
-  const productId = navigation.getParam('productId');
+  const { productId } = route.params;
   const product = useSelector(({ products }) =>
     products.availableProducts.find((item) => item.id === productId)
   );
@@ -66,8 +66,8 @@ const ProductDetailScreen = ({ navigation }) => {
   );
 };
 
-ProductDetailScreen.navigationOptions = ({ navigation }) => {
-  const headerTitle = navigation.getParam('productTitle');
+export const screenOptions = ({ route }) => {
+  const headerTitle = route.params?.productTitle;
 
   return { headerTitle };
 };

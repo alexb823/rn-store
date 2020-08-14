@@ -88,8 +88,6 @@ const CartScreen = () => {
   );
 };
 
-CartScreen.navigationOptions = {
-  headerTitle: 'Your Cart',
-};
+export const screenOptions = { headerTitle: 'Your Cart' };
 
 export default CartScreen;
